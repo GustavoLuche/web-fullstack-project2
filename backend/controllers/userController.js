@@ -33,4 +33,10 @@ module.exports = {
     await user.destroy();
     return user;
   },
+
+  getByUsername: async (username) => {
+    const user = await UserModel.findOne({ where: { username: username } });
+    if (!user) return false;
+    return user;
+  },
 };

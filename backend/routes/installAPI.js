@@ -3,7 +3,7 @@ const router = express.Router();
 
 const { sequelize } = require("../config/database");
 
-const userController = require("../controller/userController");
+const userController = require("../controllers/userController");
 
 router.get("/", async (req, res) => {
   await sequelize.sync({ force: true });
