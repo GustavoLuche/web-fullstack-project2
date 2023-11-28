@@ -14,6 +14,10 @@ app.use(express.json());
 const authRoutes = require("./routes/authRoutes");
 app.use("/auth", authRoutes);
 
+// Rota para Instalação
+const installRouter = require("./routes/installAPI");
+app.use("/install", installRouter);
+
 // Define uma rota para a raiz ("/") que envia uma mensagem simples
 app.get("/", (req, res) => {
   res.send("Express server running successfully!");
