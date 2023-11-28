@@ -1,16 +1,25 @@
 // backend/index.js
 const express = require("express");
 const app = express();
-const port = 3001;
+const port = process.env.PORT || 3001;
 
 // Conecta ao banco de dados
 const { connectToDatabase } = require("./config/database");
 connectToDatabase();
 
-// Define a route for the root URL ("/") that sends a simple message
+// Middleware para parsing de JSON
+app.use(express.json());
+
+// Rotas de autenticação
+const authRoutes = require("./routes/authRoutes");
+app.use("/auth", authRoutes);
+
+// Define uma rota para a raiz ("/") que envia uma mensagem simples
 app.get("/", (req, res) => {
-  res.end("Express server running successfully!");
+  res.send("Express server running successfully!");
 });
 
-// Start the server and listen on the specified port
-module.exports = app;
+// Inicia o servidor e escuta na porta especificada
+app.listen(port, () => {
+  console.log(`Server listening on port ${port}`);
+});
