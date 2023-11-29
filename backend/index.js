@@ -1,6 +1,7 @@
 // backend/index.js
 const express = require("express");
 const app = express();
+const cors = require("cors");
 const port = process.env.PORT || 3001;
 
 // Conecta ao banco de dados
@@ -9,6 +10,10 @@ connectToDatabase();
 
 // Middleware para parsing de JSON
 app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+
+// Use o middleware cors
+app.use(cors());
 
 // Rotas de autenticação
 const authRoutes = require("./routes/authRoutes");
