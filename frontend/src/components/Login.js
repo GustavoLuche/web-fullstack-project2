@@ -34,7 +34,7 @@ function Login() {
             <Card.Body>
               <h2 className="fw-bold mb-2 text-uppercase text-center">Login</h2>
               <Form>
-                <InputGroup controlId="formBasicUsername" className="mt-4">
+                <InputGroup className="mt-4">
                   <InputGroup.Text id="basic-addon1">@</InputGroup.Text>
                   <Form.Control
                     type="username"
