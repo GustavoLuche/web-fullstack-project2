@@ -10,16 +10,22 @@ import {
   InputGroup,
 } from "react-bootstrap";
 import authService from "../services/authService";
+import { useAuthContext } from "../context/AuthContext";
 
 function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const { toggleAuthentication } = useAuthContext();
 
   const handleLogin = async () => {
+    debugger;
     try {
       const result = await authService.login(username, password);
-      // Lógica adicional após o login bem-sucedido (redirecionamento, armazenamento de token, etc.)
+      debugger;
+      // Lógica adicional após o login bem-sucedido
       console.log("Login bem-sucedido!", result);
+      debugger;
+      toggleAuthentication(true);
     } catch (error) {
       // Lidar com erros de login (exibir mensagem de erro, etc.)
       console.error("Erro durante o login:", error.message);
@@ -54,30 +60,12 @@ function Login() {
                   />
                 </Form.Group>
 
-                <Form.Group controlId="formBasicCheckbox" className="mt-2">
-                  <p className="small">
-                    <a className="text-primary" href="#!">
-                      Forgot password?
-                    </a>
-                  </p>
-                </Form.Group>
-
-                <div
-                  className="d-flex justify-content-center align-items-center"
-                  onClick={handleLogin}
-                >
-                  <Button variant="primary" type="submit">
+                <div className="d-flex justify-content-center align-items-center mt-4">
+                  <Button onClick={handleLogin} variant="primary" type="button">
                     Login
                   </Button>
                 </div>
               </Form>
-
-              <p className="mt-3 text-center">
-                Don't have an account?{" "}
-                <a href="#" className="text-primary fw-bold">
-                  Sign Up
-                </a>
-              </p>
             </Card.Body>
           </Card>
         </Col>

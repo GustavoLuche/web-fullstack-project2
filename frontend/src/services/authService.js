@@ -6,7 +6,7 @@ const API_URL = "http://localhost:3001";
 const authService = {
   login: async (username, password) => {
     try {
-      const response = await axios.post(`${API_URL}/login`, {
+      const response = await axios.post(`${API_URL}/auth/login`, {
         username,
         password,
       });
