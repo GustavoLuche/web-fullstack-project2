@@ -19,6 +19,10 @@ app.use(cors());
 const authRoutes = require("./routes/authRoutes");
 app.use("/auth", authRoutes);
 
+// Rotas de autenticação
+const adviceRoutes = require("./routes/adviceRoutes");
+app.use("/advice", adviceRoutes);
+
 // Rota para Instalação
 const installRouter = require("./routes/installAPI");
 app.use("/install", installRouter);

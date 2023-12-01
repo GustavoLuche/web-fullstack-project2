@@ -5,15 +5,18 @@ const router = express.Router();
 const { sequelize } = require("../config/database");
 
 const userController = require("../controllers/userController");
+const adviceController = require("../controllers/adviceController");
 
 router.get("/", async (req, res) => {
   await sequelize.sync({ force: true });
 
   const users = await createUsers();
+  const advices = await createAdvices();
 
   res.json({
     status: true,
     users: users,
+    advices: advices,
   });
 });
 
@@ -113,6 +116,54 @@ const createUsers = async () => {
   }
 
   return users;
+};
+
+const createAdvices = async () => {
+  const adviceData = [
+    {
+      adviceText:
+        "Embrace the unexpected, life's surprises often lead to the best moments.",
+    },
+    {
+      adviceText:
+        "Always carry a pen; you never know when inspiration will strike.",
+    },
+    {
+      adviceText: "When in doubt, dance it out.",
+    },
+    {
+      adviceText: "Don't be afraid to ask for help when you need it.",
+    },
+    {
+      adviceText: "Find joy in the little things; they often matter the most.",
+    },
+    {
+      adviceText:
+        "If you want to make the world a better place, start by being kind to yourself.",
+    },
+    {
+      adviceText: "Learn to say 'no' when needed; it's a powerful skill.",
+    },
+    {
+      adviceText:
+        "Take a moment to appreciate the beauty of nature around you.",
+    },
+    {
+      adviceText: "Try cooking a new recipe at least once a month.",
+    },
+    {
+      adviceText: "Travel not to escape life, but for life not to escape you.",
+    },
+  ];
+
+  const advices = [];
+
+  for (let i = 0; i < adviceData.length; i++) {
+    const advice = await adviceController.save(adviceData[i].adviceText);
+    advices.push(advice);
+  }
+
+  return advices;
 };
 
 module.exports = router;
