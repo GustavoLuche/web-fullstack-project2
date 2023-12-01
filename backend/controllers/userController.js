@@ -1,4 +1,6 @@
+// backend/controllers/userController.js
 const UserModel = require("../models/User");
+const { hashPassword } = require("../services/authService");
 
 module.exports = {
   list: async () => {
@@ -7,9 +9,12 @@ module.exports = {
   },
 
   save: async (username, password, isAdmin) => {
+    // Hash da senha antes de salvar no banco de dados
+    const hashedPassword = await hashPassword(password);
+
     const user = await UserModel.create({
       username: username,
-      password: password,
+      password: hashedPassword,
       isAdmin: isAdmin,
     });
     return user;

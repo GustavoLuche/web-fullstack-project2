@@ -2,7 +2,11 @@
 const express = require("express");
 const router = express.Router();
 const userController = require("../controllers/userController");
-const { generateToken } = require("../services/authService");
+const {
+  generateToken,
+  hashPassword,
+  verifyPassword,
+} = require("../services/authService");
 
 // Rota de login
 router.post("/login", async (req, res) => {
@@ -18,8 +22,8 @@ router.post("/login", async (req, res) => {
     const user = await userController.getByUsername(username);
 
     if (user) {
-      // Verificar a senha
-      const isPasswordValid = password === user.password;
+      // Verificar a senha usando bcrypt
+      const isPasswordValid = await verifyPassword(password, user.password);
 
       if (!isPasswordValid) {
         return res
