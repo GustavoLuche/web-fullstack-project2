@@ -1,5 +1,5 @@
 // frontend/src/constex/authContext.js
-import React, { createContext, useReducer, useContext } from "react";
+import React, { createContext, useReducer, useContext, useEffect } from "react";
 import { login } from "../services/authService";
 
 // Estrutura inicial do estado
@@ -31,6 +31,16 @@ function authReducer(authState, action) {
 export function AuthContextProvider({ children }) {
   const [authState, dispatch] = useReducer(authReducer, initialAuthState);
 
+  // Verificar token ao inicializar
+  useEffect(() => {
+    const storedToken = localStorage.getItem("token");
+
+    if (storedToken) {
+      dispatch({ type: SET_TOKEN, payload: storedToken });
+      toggleAuthentication(true);
+    }
+  }, []);
+
   const toggleAuthentication = (value) => {
     dispatch({ type: SET_AUTHENTICATED, payload: value });
   };
@@ -40,6 +50,10 @@ export function AuthContextProvider({ children }) {
       const result = await login(username, password);
       dispatch({ type: SET_TOKEN, payload: result.token });
       toggleAuthentication(true);
+
+      // Armazenar token no local storage
+      localStorage.setItem("token", result.token);
+
       return result;
     } catch (error) {
       // Tratar erros de login, se necessário
@@ -48,12 +62,21 @@ export function AuthContextProvider({ children }) {
     }
   };
 
+  const performLogout = () => {
+    // Remover token do local storage
+    localStorage.removeItem("token");
+
+    dispatch({ type: SET_TOKEN, payload: null });
+    toggleAuthentication(false);
+  };
+
   return (
     <AuthContext.Provider
       value={{
         authState,
         toggleAuthentication,
         performLogin,
+        performLogout,
       }}
     >
       {children}
