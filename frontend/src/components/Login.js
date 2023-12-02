@@ -9,26 +9,27 @@ import {
   Button,
   InputGroup,
 } from "react-bootstrap";
-import authService from "../services/authService";
 import { useAuthContext } from "../context/AuthContext";
 
 function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const { toggleAuthentication } = useAuthContext();
+  const { performLogin } = useAuthContext();
 
   const handleLogin = async () => {
-    debugger;
     try {
-      const result = await authService.login(username, password);
-      debugger;
-      // Lógica adicional após o login bem-sucedido
-      console.log("Login bem-sucedido!", result);
-      debugger;
-      toggleAuthentication(true);
+      const result = await performLogin(username, password);
+
+      // Você pode adicionar lógica adicional aqui com base no resultado do login
+      if (result) {
+        console.log("Login bem-sucedido:", result);
+
+        // Redirecionar ou realizar outras ações necessárias após o login
+      } else {
+        console.log("Login falhou");
+      }
     } catch (error) {
-      // Lidar com erros de login (exibir mensagem de erro, etc.)
-      console.error("Erro durante o login:", error.message);
+      console.error("Erro ao tentar fazer login:", error);
     }
   };
 
