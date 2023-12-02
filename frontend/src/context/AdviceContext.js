@@ -1,3 +1,5 @@
+// frontend/src/constex/AdviceContext.js
+
 import React, { createContext, useReducer, useContext } from "react";
 import { searchAdviceByTerm } from "../services/adviceService";
 
@@ -10,6 +12,10 @@ const initialState = {
   currentPage: 1,
   searchPerformed: false,
   itemsPerPage: 5,
+  showHomePage: true,
+  showInsertionPage: false,
+  showSearchPage: false,
+  showNotificationPage: false,
 };
 
 // Criação do contexto
@@ -22,6 +28,10 @@ const SET_IS_LOADING = "SET_IS_LOADING";
 const SET_SEARCH_TERM = "SET_SEARCH_TERM";
 const SET_CURRENT_PAGE = "SET_CURRENT_PAGE";
 const SET_SEARCH_PERFORMED = "SET_SEARCH_PERFORMED";
+const SET_SHOW_HOME_PAGE = "SET_SHOW_HOME_PAGE";
+const SET_SHOW_INSERTION_PAGE = "SET_SHOW_INSERTION_PAGE";
+const SET_SHOW_SEARCH_PAGE = "SET_SHOW_SEARCH_PAGE";
+const SET_SHOW_NOTIFICATION_PAGE = "SET_SHOW_NOTIFICATION_PAGE";
 
 // Função de redução para atualizar o estado com base em ações
 function searchReducer(state, action) {
@@ -38,6 +48,14 @@ function searchReducer(state, action) {
       return { ...state, currentPage: action.payload };
     case SET_SEARCH_PERFORMED:
       return { ...state, searchPerformed: action.payload };
+    case SET_SHOW_HOME_PAGE:
+      return { ...state, showHomePage: action.payload };
+    case SET_SHOW_INSERTION_PAGE:
+      return { ...state, showInsertionPage: action.payload };
+    case SET_SHOW_SEARCH_PAGE:
+      return { ...state, showSearchPage: action.payload };
+    case SET_SHOW_NOTIFICATION_PAGE:
+      return { ...state, showNotificationPage: action.payload };
     default:
       return state;
   }
@@ -72,12 +90,29 @@ export function AdviceContextProvider({ children }) {
     dispatch({ type: SET_CURRENT_PAGE, payload: pageNumber });
   };
 
+  // Função para mudar o estado da página
+  const changePage = (pageName) => {
+    debugger;
+    dispatch({ type: SET_SHOW_HOME_PAGE, payload: pageName === "home" });
+    dispatch({
+      type: SET_SHOW_INSERTION_PAGE,
+      payload: pageName === "insertion",
+    });
+    dispatch({ type: SET_SHOW_SEARCH_PAGE, payload: pageName === "search" });
+    dispatch({
+      type: SET_SHOW_NOTIFICATION_PAGE,
+      payload: pageName === "notification",
+    });
+    debugger;
+  };
+
   return (
     <AdviceContext.Provider
       value={{
         state,
         searchAdviceByTerm: searchAdviceByTermWithContext,
         handlePageChange,
+        changePage,
       }}
     >
       {children}
