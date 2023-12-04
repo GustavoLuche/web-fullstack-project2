@@ -1,5 +1,6 @@
 // backend/controllers/adviceController.js
 const AdviceModel = require("../models/Advice");
+const Sequelize = require("sequelize");
 
 module.exports = {
   list: async () => {
@@ -46,11 +47,9 @@ module.exports = {
 
   getByTerm: async (term) => {
     const advices = await AdviceModel.findAll({
-      where: {
-        advice: {
-          [Sequelize.Op.iLike]: `%${term}%`, // O operador iLike faz a busca case-insensitive
-        },
-      },
+      where: Sequelize.where(Sequelize.fn("lower", Sequelize.col("advice")), {
+        [Sequelize.Op.like]: "%" + term.toLowerCase() + "%",
+      }),
     });
     return advices;
   },
