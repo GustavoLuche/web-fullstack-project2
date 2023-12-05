@@ -19,13 +19,11 @@ function App() {
 
   // Renderiza a página apropriada com base no estado
   const renderPage = () => {
-    debugger;
     if (!isAuthenticated) {
       return <Login />;
     }
-    debugger;
+
     if (showInsertionPage) {
-      debugger;
       // Renderiza a InsertionPage
       return <InsertionPage />;
     } else if (showSearchPage) {
@@ -35,7 +33,6 @@ function App() {
       // Renderiza a NotificationPage
       return <NotificationPage />;
     } else {
-      debugger;
       // Renderiza a HomePage por padrão
       return <HomePage />;
     }

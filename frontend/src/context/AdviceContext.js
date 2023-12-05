@@ -1,7 +1,10 @@
 // frontend/src/constex/AdviceContext.js
 
-import React, { createContext, useReducer, useContext } from "react";
-import { searchAdviceByTerm } from "../services/adviceService";
+import React, { createContext, useReducer, useContext, useEffect } from "react";
+import {
+  searchAdviceByTerm,
+  searchAdviceByTermRoute,
+} from "../services/adviceService";
 
 // Estrutura inicial do estado
 const initialState = {
@@ -65,14 +68,26 @@ function searchReducer(state, action) {
 export function AdviceContextProvider({ children }) {
   const [state, dispatch] = useReducer(searchReducer, initialState);
 
+  useEffect(() => {
+    dispatch({ type: SET_SEARCH_TERM, payload: "" });
+    dispatch({ type: SET_SEARCH_PERFORMED, payload: false });
+    dispatch({ type: SET_ERROR, payload: null });
+  }, [state.showSearchPage]);
+
   // Função para buscar conselhos com base no termo
   const searchAdviceByTermWithContext = async (term) => {
     try {
       dispatch({ type: SET_IS_LOADING, payload: true });
       dispatch({ type: SET_SEARCH_TERM, payload: term });
 
-      const adviceData = await searchAdviceByTerm(term);
-      dispatch({ type: SET_ADVICE_LIST, payload: adviceData });
+      if (state.showSearchPage) {
+        const adviceData = await searchAdviceByTermRoute(term);
+        dispatch({ type: SET_ADVICE_LIST, payload: adviceData });
+      } else {
+        const adviceData = await searchAdviceByTerm(term);
+        dispatch({ type: SET_ADVICE_LIST, payload: adviceData });
+      }
+
       dispatch({ type: SET_ERROR, payload: null });
       dispatch({ type: SET_SEARCH_PERFORMED, payload: true });
     } catch (error) {
@@ -92,7 +107,6 @@ export function AdviceContextProvider({ children }) {
 
   // Função para mudar o estado da página
   const changePage = (pageName) => {
-    debugger;
     dispatch({ type: SET_SHOW_HOME_PAGE, payload: pageName === "home" });
     dispatch({
       type: SET_SHOW_INSERTION_PAGE,
@@ -103,7 +117,6 @@ export function AdviceContextProvider({ children }) {
       type: SET_SHOW_NOTIFICATION_PAGE,
       payload: pageName === "notification",
     });
-    debugger;
   };
 
   return (

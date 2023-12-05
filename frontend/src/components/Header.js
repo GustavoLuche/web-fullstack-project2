@@ -13,9 +13,7 @@ function Header({ title }) {
   };
 
   const handleNavClick = (page) => {
-    debugger;
     changePage(page);
-    debugger;
   };
 
   return (
