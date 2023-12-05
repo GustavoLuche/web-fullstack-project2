@@ -2,9 +2,10 @@
 const express = require("express");
 const router = express.Router();
 const adviceController = require("../controllers/adviceController");
+const { authenticateToken } = require("../services/authService");
 
 // Rota para inserção de conselho
-router.post("/add", async (req, res) => {
+router.post("/add", authenticateToken, async (req, res) => {
   try {
     const { advice } = req.body;
     const newAdvice = await adviceController.save(advice);
@@ -24,7 +25,7 @@ router.post("/add", async (req, res) => {
 });
 
 // Rota para buscar conselhos por termo
-router.get("/search", async (req, res) => {
+router.get("/search", authenticateToken, async (req, res) => {
   try {
     const { term } = req.query;
     const advices = await adviceController.getByTerm(term);

@@ -3,8 +3,7 @@ const express = require("express");
 const router = express.Router();
 const userController = require("../controllers/userController");
 const {
-  generateToken,
-  hashPassword,
+  generateToken, 
   verifyPassword,
 } = require("../services/authService");
 
