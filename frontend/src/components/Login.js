@@ -22,7 +22,7 @@ function Login() {
 
       // Você pode adicionar lógica adicional aqui com base no resultado do login
       if (result) {
-        console.log("Login bem-sucedido:", result);
+        console.log("Login bem-sucedido!");
 
         // Redirecionar ou realizar outras ações necessárias após o login
       } else {
