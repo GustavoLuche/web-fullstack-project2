@@ -47,13 +47,57 @@ export async function searchAdviceByTermRoute(term) {
     const response = await axiosInstance.get(searchURL);
 
     // Verifique se a resposta foi bem-sucedida e contém dados válidos
-    if (response.status === 200 && response.data && response.data.advices && response.data.advices.length > 0) {
+    if (
+      response.status === 200 &&
+      response.data &&
+      response.data.advices &&
+      response.data.advices.length > 0
+    ) {
       return response.data.advices;
     } else {
       throw new Error("No advice found for the specified term.");
     }
   } catch (error) {
     console.error(`Error when seeking advice: ${error.message}`);
+    throw error;
+  }
+}
+
+/**
+ * Função assíncrona para inserir um novo conselho.
+ *
+ * @param {string} adviceText - O texto do conselho a ser inserido.
+ * @returns {Promise<Object>} Um objeto representando o conselho inserido.
+ * @throws {Error} Lança um erro se houver algum problema com a solicitação ou se a inserção falhar.
+ */
+export async function insertAdvice(adviceText) {
+  try {
+    // Validar o comprimento do conselho
+    if (adviceText.length < 3 || adviceText.length > 146) {
+      throw new Error("Advice must be between 3 and 146 characters.");
+    }
+
+    // Construa a URL para a rota de inserção
+    const insertURL = "http://localhost:3001/advice/add";
+
+    // Faça uma solicitação HTTP POST para a API
+    const response = await axiosInstance.post(insertURL, {
+      advice: adviceText,
+    });
+
+    // Verifique se a resposta foi bem-sucedida e contém dados válidos
+    if (
+      response.status === 200 &&
+      response.data &&
+      response.data.success &&
+      response.data.advice
+    ) {
+      return response.data.advice;
+    } else {
+      throw new Error("Failed to insert advice.");
+    }
+  } catch (error) {
+    console.error(`Error when inserting advice: ${error.message}`);
     throw error;
   }
 }

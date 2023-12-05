@@ -4,6 +4,7 @@ import React, { createContext, useReducer, useContext, useEffect } from "react";
 import {
   searchAdviceByTerm,
   searchAdviceByTermRoute,
+  insertAdvice,
 } from "../services/adviceService";
 
 // Estrutura inicial do estado
@@ -119,6 +120,20 @@ export function AdviceContextProvider({ children }) {
     });
   };
 
+  // Função para inserir um novo conselho
+  const insertAdviceWithContext = async (adviceText) => {
+    try {
+      dispatch({ type: SET_IS_LOADING, payload: true });
+      const insertedAdvice = await insertAdvice(adviceText);
+      console.log("Inserido com sucesso: ", insertedAdvice);
+      dispatch({ type: SET_ERROR, payload: null });
+    } catch (error) {
+      dispatch({ type: SET_ERROR, payload: error.message });
+    } finally {
+      dispatch({ type: SET_IS_LOADING, payload: false });
+    }
+  };
+
   return (
     <AdviceContext.Provider
       value={{
@@ -126,6 +141,7 @@ export function AdviceContextProvider({ children }) {
         searchAdviceByTerm: searchAdviceByTermWithContext,
         handlePageChange,
         changePage,
+        insertAdvice: insertAdviceWithContext,
       }}
     >
       {children}
