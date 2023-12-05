@@ -1,4 +1,5 @@
 import axios from "axios";
+import axiosInstance from "./axiosConfig";
 
 // Defina a URL base para a API de conselhos
 const BASE_URL = "https://api.adviceslip.com/advice";
@@ -43,7 +44,7 @@ export async function searchAdviceByTermRoute(term) {
     const searchURL = `http://localhost:3001/advice/search?term=${term}`;
 
     // Faça uma solicitação HTTP GET para a API
-    const response = await axios.get(searchURL);
+    const response = await axiosInstance.get(searchURL);
 
     // Verifique se a resposta foi bem-sucedida e contém dados válidos
     if (response.status === 200 && response.data && response.data.advices && response.data.advices.length > 0) {
