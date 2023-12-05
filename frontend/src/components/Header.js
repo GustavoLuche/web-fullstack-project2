@@ -5,7 +5,7 @@ import { useAuthContext } from "../context/AuthContext";
 import { useAdviceContext } from "../context/AdviceContext.js";
 
 function Header({ title }) {
-  const { performLogout } = useAuthContext();
+  const { performLogout, checkTokenValidity } = useAuthContext();
   const { changePage } = useAdviceContext();
 
   const handleLogout = () => {
@@ -13,6 +13,7 @@ function Header({ title }) {
   };
 
   const handleNavClick = (page) => {
+    checkTokenValidity();
     changePage(page);
   };
 

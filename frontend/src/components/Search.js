@@ -3,17 +3,20 @@ import Button from "react-bootstrap/Button";
 import InputGroup from "react-bootstrap/InputGroup";
 import Form from "react-bootstrap/Form";
 import { useAdviceContext } from "../context/AdviceContext";
+import { useAuthContext } from "../context/AuthContext";
 
 // O componente "Search" permite que os usuários insiram um termo de busca e iniciem a pesquisa.
 function Search() {
   // Usando o contexto para acessar a função de pesquisa
   const { searchAdviceByTerm } = useAdviceContext();
+  const { checkTokenValidity } = useAuthContext();
 
   // Estado local para controlar o termo de busca
   const [searchQuery, setSearchQuery] = useState("");
 
   // Função para lidar com a pesquisa
   const handleSearch = () => {
+    checkTokenValidity()
     if (typeof searchAdviceByTerm === "function" && searchQuery.trim() !== "") {
       searchAdviceByTerm(searchQuery);
       setSearchQuery(""); // Limpa o campo de busca após a pesquisa

@@ -1,6 +1,6 @@
-// frontend/src/constex/authContext.js
+// frontend/src/constex/AuthContext.js
 import React, { createContext, useReducer, useContext, useEffect } from "react";
-import { login } from "../services/authService";
+import { login, isTokenValid } from "../services/authService";
 
 // Estrutura inicial do estado
 const initialAuthState = {
@@ -33,12 +33,7 @@ export function AuthContextProvider({ children }) {
 
   // Verificar token ao inicializar
   useEffect(() => {
-    const storedToken = localStorage.getItem("token");
-
-    if (storedToken) {
-      dispatch({ type: SET_TOKEN, payload: storedToken });
-      toggleAuthentication(true);
-    }
+    checkTokenValidity();
   }, []);
 
   const toggleAuthentication = (value) => {
@@ -70,6 +65,20 @@ export function AuthContextProvider({ children }) {
     toggleAuthentication(false);
   };
 
+  // Função para verificar a validade do token
+  const checkTokenValidity = () => {
+    const storedToken = localStorage.getItem("token");
+
+    if (storedToken && isTokenValid(storedToken)) {
+      // Token válido
+      dispatch({ type: SET_TOKEN, payload: storedToken });
+      toggleAuthentication(true);
+    } else {
+      // Token inválido ou ausente
+      performLogout();
+    }
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -77,6 +86,8 @@ export function AuthContextProvider({ children }) {
         toggleAuthentication,
         performLogin,
         performLogout,
+        isTokenValid,
+        checkTokenValidity,
       }}
     >
       {children}
