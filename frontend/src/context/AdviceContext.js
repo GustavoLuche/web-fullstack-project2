@@ -70,10 +70,13 @@ export function AdviceContextProvider({ children }) {
   const [state, dispatch] = useReducer(searchReducer, initialState);
 
   useEffect(() => {
-    dispatch({ type: SET_SEARCH_TERM, payload: "" });
-    dispatch({ type: SET_SEARCH_PERFORMED, payload: false });
-    dispatch({ type: SET_ERROR, payload: null });
-  }, [state.showSearchPage]);
+    resetState();
+  }, [
+    state.showHomePage,
+    state.showInsertionPage,
+    state.showSearchPage,
+    state.showNotificationPage,
+  ]);
 
   // Função para buscar conselhos com base no termo
   const searchAdviceByTermWithContext = async (term) => {
@@ -134,6 +137,13 @@ export function AdviceContextProvider({ children }) {
     }
   };
 
+  // Função para redefinir o estado
+  const resetState = () => {
+    dispatch({ type: SET_SEARCH_TERM, payload: "" });
+    dispatch({ type: SET_SEARCH_PERFORMED, payload: false });
+    dispatch({ type: SET_ERROR, payload: null });
+  };
+
   return (
     <AdviceContext.Provider
       value={{
@@ -142,6 +152,7 @@ export function AdviceContextProvider({ children }) {
         handlePageChange,
         changePage,
         insertAdvice: insertAdviceWithContext,
+        resetState,
       }}
     >
       {children}

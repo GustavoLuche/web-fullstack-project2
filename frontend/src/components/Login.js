@@ -10,13 +10,16 @@ import {
   InputGroup,
 } from "react-bootstrap";
 import { useAuthContext } from "../context/AuthContext";
+import { useAdviceContext } from "../context/AdviceContext";
 
 function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const { performLogin } = useAuthContext();
+  const { resetState } = useAdviceContext();
 
   const handleLogin = async () => {
+    resetState();
     try {
       const result = await performLogin(username, password);
 
