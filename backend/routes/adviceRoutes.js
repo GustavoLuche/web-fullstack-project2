@@ -3,7 +3,7 @@ const express = require("express");
 const router = express.Router();
 const adviceController = require("../controllers/adviceController");
 const userController = require("../controllers/userController");
-const logController = require("../controllers/logController ");
+const logController = require("../controllers/logController");
 const { authenticateToken } = require("../services/authService");
 
 const expressRedisCache = require("express-redis-cache");
