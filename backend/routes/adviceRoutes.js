@@ -2,6 +2,8 @@
 const express = require("express");
 const router = express.Router();
 const adviceController = require("../controllers/adviceController");
+const userController = require("../controllers/userController");
+const logController = require("../controllers/logController ");
 const { authenticateToken } = require("../services/authService");
 
 const expressRedisCache = require("express-redis-cache");
@@ -19,6 +21,29 @@ router.post("/add", authenticateToken, async (req, res) => {
   try {
     const { advice } = req.body;
     const newAdvice = await adviceController.save(advice);
+
+    // Registra no log
+    await logController.logMessage({
+      message: `Novo conselho adicionado: ${newAdvice.id}`,
+      username: req.username,
+      actionType: "add",
+    });
+
+    // Notifica todos os usuários, exceto o usuário atual
+    const allUsers = await userController.list();
+    const senderUsername = req.username;
+
+    allUsers.forEach(async (user) => {
+      if (user.username !== senderUsername) {
+        // Envie uma notificação para cada usuário
+        await logController.logMessage({
+          message: `Novo conselho adicionado por ${senderUsername}: ${newAdvice.id}`,
+          username: user.username,
+          actionType: "notification",
+        });
+      }
+    });
+
     // Invalidate the cache
     cache.del("adviceRoutes", function (err) {
       if (err) {
@@ -56,6 +81,15 @@ router.get("/search", authenticateToken, async (req, res) => {
       name: cacheKey,
     })(req, res, async () => {
       const advices = await adviceController.getByTerm(term);
+
+      // Registra no log a busca por um termo
+      await logController.logMessage({
+        message: `Busca realizada por termo: ${term}`,
+        username: req.username,
+        actionType: "search",
+        searchTerm: term,
+      });
+
       res.json({
         success: true,
         message: "Conselhos encontrados com sucesso.",
