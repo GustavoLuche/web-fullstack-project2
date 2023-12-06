@@ -6,12 +6,27 @@ const { sequelize } = require("../config/database");
 
 const userController = require("../controllers/userController");
 const adviceController = require("../controllers/adviceController");
+const logController = require("../controllers/logController");
 
 router.get("/", async (req, res) => {
   await sequelize.sync({ force: true });
 
   const users = await createUsers();
   const advices = await createAdvices();
+
+  // Log de criação de usuários
+  await logController.logMessage({
+    message: "Usuários criados durante a instalação",
+    username: "system",
+    actionType: "installation",
+  });
+
+  // Log de criação de conselhos
+  await logController.logMessage({
+    message: "Conselhos criados durante a instalação",
+    username: "system",
+    actionType: "installation",
+  });
 
   res.json({
     status: true,
