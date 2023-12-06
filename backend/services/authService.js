@@ -4,12 +4,11 @@ const bcrypt = require("bcrypt");
 require("dotenv").config();
 
 // Função para gerar o token de autenticação
-function generateToken(userId) {
+function generateToken(userId, username) {
   const jwtSecret = process.env.JWT_SECRET;
   const expiresIn = process.env.JWT_EXPIRES_IN;
-  console.log(jwtSecret);
-  console.log(expiresIn);
-  const token = jwt.sign({ userId: userId }, jwtSecret, {
+
+  const token = jwt.sign({ userId: userId, username: username }, jwtSecret, {
     expiresIn: expiresIn,
   });
 
@@ -39,6 +38,7 @@ function authenticateToken(req, res, next) {
       return;
     }
     req.userId = payload.userId;
+    req.username = payload.username;
 
     next();
   });

@@ -31,7 +31,7 @@ router.post("/login", async (req, res) => {
       }
 
       // Gerar o token de autenticação
-      const token = generateToken(user.id);
+      const token = generateToken(user.id, user.username);
 
       // Retornar a resposta com o usuário autenticado e o token
       return res.json({ status: true, user: user, token: token });
