@@ -28,8 +28,8 @@ const createUsers = async () => {
       isAdmin: true,
     },
     {
-      username: "john_doe",
-      password: "123456",
+      username: "user",
+      password: "user123",
       isAdmin: false,
     },
     {

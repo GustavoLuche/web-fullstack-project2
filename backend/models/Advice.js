@@ -1,3 +1,4 @@
+// backend/models/Advice.js
 const { DataTypes } = require("sequelize");
 const { sequelize } = require("../config/database");
 
