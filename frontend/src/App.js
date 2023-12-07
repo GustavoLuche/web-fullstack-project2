@@ -1,5 +1,4 @@
 // frontend/src/App.js
-
 import React from "react";
 import HomePage from "./components/HomePage.js";
 import InsertionPage from "./components/InsertionPage.js";

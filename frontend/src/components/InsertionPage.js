@@ -5,10 +5,12 @@ import { Container, Form, Button } from "react-bootstrap";
 import Header from "./Header";
 import Footer from "./Footer";
 import { useAdviceContext } from "../context/AdviceContext";
+import ErrorMessage from "./ErrorMessage";
 
 // Defina o componente InsertionPage
 const InsertionPage = () => {
-  const { insertAdvice } = useAdviceContext();
+  const { state, insertAdvice } = useAdviceContext();
+  const { error } = state;
 
   // Estado para armazenar o texto do conselho inserido
   const [adviceText, setAdviceText] = useState("");
@@ -20,7 +22,6 @@ const InsertionPage = () => {
     // Lógica para enviar o conselho para o banco de dados
     insertAdvice(adviceText);
     console.log("Advice Text:", adviceText);
-    alert("Advice enviado!");
 
     // Limpar o campo de texto após a submissão
     setAdviceText("");
@@ -52,6 +53,7 @@ const InsertionPage = () => {
               </Button>
             </div>
           </Form>
+          {error && <ErrorMessage />}
         </Container>
         <Footer />
       </div>

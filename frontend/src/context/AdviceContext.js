@@ -133,6 +133,7 @@ export function AdviceContextProvider({ children }) {
     try {
       dispatch({ type: SET_IS_LOADING, payload: true });
       const insertedAdvice = await insertAdvice(adviceText);
+      alert("Advice enviado!");
       console.log("Inserido com sucesso: ", insertedAdvice);
       dispatch({ type: SET_ERROR, payload: null });
     } catch (error) {
