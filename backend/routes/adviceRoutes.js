@@ -1,4 +1,3 @@
-// backend/routes/adviceRoutes.js
 const express = require("express");
 const router = express.Router();
 const adviceController = require("../controllers/adviceController");
@@ -7,6 +6,8 @@ const logController = require("../controllers/logController");
 const { authenticateToken } = require("../services/authService");
 
 const expressRedisCache = require("express-redis-cache");
+const createDOMPurify = require("dompurify");
+const { JSDOM } = require("jsdom");
 
 // Configuração do cache
 const cache = expressRedisCache({
@@ -16,11 +17,16 @@ const cache = expressRedisCache({
   expire: 60,
 });
 
+const window = new JSDOM("").window;
+const DOMPurify = createDOMPurify(window);
+
 // Rota para inserção de conselho
 router.post("/add", authenticateToken, async (req, res) => {
   try {
     const { advice } = req.body;
-    const newAdvice = await adviceController.save(advice);
+    // Sanitiza o texto do conselho para evitar XSS
+    const sanitizedAdvice = DOMPurify.sanitize(advice);
+    const newAdvice = await adviceController.save(sanitizedAdvice);
 
     // Registra no log
     await logController.logMessage({
@@ -33,7 +39,7 @@ router.post("/add", authenticateToken, async (req, res) => {
     const allUsers = await userController.list();
     const senderUsername = req.username;
 
-    allUsers.forEach(async (user) => {
+    for (const user of allUsers) {
       if (user.username !== senderUsername) {
         // Envie uma notificação para cada usuário
         await logController.logMessage({
@@ -42,7 +48,7 @@ router.post("/add", authenticateToken, async (req, res) => {
           actionType: "notification",
         });
       }
-    });
+    }
 
     // Invalidate the cache
     cache.del("adviceRoutes", function (err) {
@@ -80,14 +86,16 @@ router.get("/search", authenticateToken, async (req, res) => {
       expire: 60,
       name: cacheKey,
     })(req, res, async () => {
-      const advices = await adviceController.getByTerm(term);
+      // Sanitiza o termo de busca para evitar XSS
+      const sanitizedTerm = DOMPurify.sanitize(term);
+      const advices = await adviceController.getByTerm(sanitizedTerm);
 
       // Registra no log a busca por um termo
       await logController.logMessage({
-        message: `Busca realizada por termo: ${term}`,
+        message: `Busca realizada por termo: ${sanitizedTerm}`,
         username: req.username,
         actionType: "search",
-        searchTerm: term,
+        searchTerm: sanitizedTerm,
       });
 
       res.json({

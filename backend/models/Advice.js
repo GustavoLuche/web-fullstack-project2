@@ -11,6 +11,7 @@ const Advice = sequelize.define("Advice", {
   advice: {
     type: DataTypes.STRING,
     allowNull: false,
+    unique: true,
     validate: {
       notNull: {
         msg: "O campo 'advice' não pode ser nulo.",

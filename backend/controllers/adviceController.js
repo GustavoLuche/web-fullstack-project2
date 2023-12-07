@@ -1,4 +1,3 @@
-// backend/controllers/adviceController.js
 const AdviceModel = require("../models/Advice");
 const Sequelize = require("sequelize");
 
@@ -9,48 +8,79 @@ module.exports = {
   },
 
   save: async (adviceText) => {
-    const newAdvice = await AdviceModel.create({
-      advice: adviceText, // Atualize o nome da variável aqui
-    });
-    return newAdvice;
+    try {
+      // Evita SQL Injection usando prepared statements
+      const newAdvice = await AdviceModel.create({
+        advice: adviceText,
+      });
+      return newAdvice;
+    } catch (error) {
+      throw error;
+    }
   },
 
   update: async (id, updatedAdviceText) => {
-    const existingAdvice = await AdviceModel.findByPk(id);
-    if (!existingAdvice) return false;
-    await existingAdvice.update({
-      advice: updatedAdviceText, // Atualize o nome da variável aqui
-    });
+    try {
+      const existingAdvice = await AdviceModel.findByPk(id);
+      if (!existingAdvice) return false;
 
-    return existingAdvice;
+      // Evita SQL Injection usando prepared statements
+      await existingAdvice.update({
+        advice: updatedAdviceText,
+      });
+
+      return existingAdvice;
+    } catch (error) {
+      throw error;
+    }
   },
 
   delete: async (id) => {
-    const adviceToDelete = await AdviceModel.findByPk(id);
-    if (!adviceToDelete) return false;
-    await adviceToDelete.destroy();
-    return adviceToDelete;
+    try {
+      const adviceToDelete = await AdviceModel.findByPk(id);
+      if (!adviceToDelete) return false;
+      await adviceToDelete.destroy();
+      return adviceToDelete;
+    } catch (error) {
+      throw error;
+    }
   },
 
   getByAdvice: async (adviceText) => {
-    const foundAdvice = await AdviceModel.findOne({
-      where: { advice: adviceText },
-    });
-    if (!foundAdvice) return false;
-    return foundAdvice;
+    try {
+      // Evita SQL Injection usando prepared statements
+      const foundAdvice = await AdviceModel.findOne({
+        where: Sequelize.where(Sequelize.fn("lower", Sequelize.col("advice")), {
+          [Sequelize.Op.like]: "%" + adviceText.toLowerCase() + "%",
+        }),
+      });
+      if (!foundAdvice) return false;
+      return foundAdvice;
+    } catch (error) {
+      throw error;
+    }
   },
 
   getById: async (id) => {
-    const advice = await AdviceModel.findByPk(id);
-    return advice;
+    try {
+      const advice = await AdviceModel.findByPk(id);
+      return advice;
+    } catch (error) {
+      throw error;
+    }
   },
 
   getByTerm: async (term) => {
-    const advices = await AdviceModel.findAll({
-      where: Sequelize.where(Sequelize.fn("lower", Sequelize.col("advice")), {
-        [Sequelize.Op.like]: "%" + term.toLowerCase() + "%",
-      }),
-    });
-    return advices;
+    try {
+      // Evita SQL Injection usando prepared statements
+      const advices = await AdviceModel.findAll({
+        where: Sequelize.where(Sequelize.fn("lower", Sequelize.col("advice")), {
+          [Sequelize.Op.like]: "%" + term.toLowerCase() + "%",
+        }),
+      });
+      return advices;
+    } catch (error) {
+      throw error;
+    }
   },
 };
