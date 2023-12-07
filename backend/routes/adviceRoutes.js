@@ -20,6 +20,9 @@ const cache = expressRedisCache({
 const window = new JSDOM("").window;
 const DOMPurify = createDOMPurify(window);
 
+// Configuração do RabbitMQ
+const { setupRabbitMQ } = require("../config/rabbitmqConfig");
+
 // Rota para inserção de conselho
 router.post("/add", authenticateToken, async (req, res) => {
   try {
@@ -28,7 +31,7 @@ router.post("/add", authenticateToken, async (req, res) => {
     const sanitizedAdvice = DOMPurify.sanitize(advice);
     const newAdvice = await adviceController.save(sanitizedAdvice);
 
-    // Registra no log
+    // Registra no log e envia para o RabbitMQ
     await logController.logMessage({
       message: `Novo conselho adicionado: ${newAdvice.id}`,
       username: req.username,
@@ -49,6 +52,15 @@ router.post("/add", authenticateToken, async (req, res) => {
         });
       }
     }
+
+    // Envia a mensagem para o RabbitMQ
+    const rabbitMQMessage = {
+      type: "advice",
+      action: "add",
+      advice: newAdvice,
+    };
+
+    await sendMessageToRabbitMQ(rabbitMQMessage);
 
     // Invalidate the cache
     cache.del("adviceRoutes", function (err) {
@@ -72,6 +84,14 @@ router.post("/add", authenticateToken, async (req, res) => {
     });
   }
 });
+
+// Função para enviar mensagem para o RabbitMQ
+async function sendMessageToRabbitMQ(message) {
+  const { channel, exchange } = await setupRabbitMQ();
+
+  // Publica a mensagem no exchange
+  channel.publish(exchange, "", Buffer.from(JSON.stringify(message)));
+}
 
 // Rota para buscar conselhos por termo
 router.get("/search", authenticateToken, async (req, res) => {

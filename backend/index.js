@@ -38,6 +38,28 @@ app.get("/", (req, res) => {
   res.send("Express server running successfully!");
 });
 
+// Configura o RabbitMQ
+const { setupRabbitMQ } = require("./config/rabbitmqConfig");
+
+setupRabbitMQ().then(({ channel, exchange }) => {
+  // Cria uma fila temporária exclusiva
+  channel.assertQueue("", { exclusive: true }).then((q) => {
+    // Liga a fila ao exchange
+    channel.bindQueue(q.queue, exchange, "");
+
+    // Consume mensagens do RabbitMQ
+    channel.consume(
+      q.queue,
+      (msg) => {
+        // Processa a mensagem conforme necessário
+        const logMessage = msg.content.toString();
+        console.log("Received log message:", logMessage);
+      },
+      { noAck: true }
+    );
+  });
+});
+
 // Inicia o servidor e escuta na porta especificada
 app.listen(port, () => {
   console.log(`Server listening on port ${port}`);
