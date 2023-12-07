@@ -1,8 +1,10 @@
 // backend/index.js
 const express = require("express");
-const app = express();
 const cors = require("cors");
+
 const port = process.env.PORT || 3001;
+
+const app = express();
 
 // Conecta ao banco de dados
 const { connectToDatabase } = require("./config/database");
@@ -19,9 +21,13 @@ app.use(cors());
 const authRoutes = require("./routes/authRoutes");
 app.use("/auth", authRoutes);
 
-// Rotas de autenticação
+// Rotas de advices
 const adviceRoutes = require("./routes/adviceRoutes");
 app.use("/advice", adviceRoutes);
+
+// Rotas de notificação
+const notificationRoutes = require("./routes/notificationRoutes");
+app.use("/notification", notificationRoutes);
 
 // Rota para Instalação
 const installRouter = require("./routes/installAPI");

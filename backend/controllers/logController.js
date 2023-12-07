@@ -16,4 +16,14 @@ module.exports = {
     });
     return log;
   },
+
+  getNotificationsForUser: async (username) => {
+    const notifications = await LogModel.findAll({
+      where: {
+        username: username,
+        actionType: "notification",
+      },
+    });
+    return notifications;
+  },
 };
