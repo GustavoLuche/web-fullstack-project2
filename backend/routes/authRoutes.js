@@ -4,6 +4,16 @@ const userController = require("../controllers/userController");
 const { generateToken, verifyPassword } = require("../services/authService");
 const logController = require("../controllers/logController");
 
+// Configuração do RabbitMQ
+const { setupRabbitMQ } = require("../config/rabbitmqConfig");
+
+// Função para enviar mensagem para o RabbitMQ
+async function sendMessageToRabbitMQ(message) {
+  const { channel, exchange } = await setupRabbitMQ();
+  // Publica a mensagem no exchange
+  channel.publish(exchange, "", Buffer.from(JSON.stringify(message)));
+}
+
 // Rota de login
 router.post("/login", async (req, res) => {
   try {
@@ -17,6 +27,14 @@ router.post("/login", async (req, res) => {
         username: username,
         actionType: "authentication_failure",
       });
+
+      // Envie uma mensagem para o RabbitMQ após o registro do log
+      const rabbitMQMessage = {
+        type: "authentication",
+        action: "failure",
+        username: username,
+      };
+      await sendMessageToRabbitMQ(rabbitMQMessage);
 
       return res
         .status(400)
@@ -37,6 +55,14 @@ router.post("/login", async (req, res) => {
           actionType: "authentication_failure",
         });
 
+        // Envie uma mensagem para o RabbitMQ após o registro do log
+        const rabbitMQMessage = {
+          type: "authentication",
+          action: "failure",
+          username: username,
+        };
+        await sendMessageToRabbitMQ(rabbitMQMessage);
+
         return res
           .status(401)
           .json({ status: false, message: "username ou senha inválidos" });
@@ -48,6 +74,14 @@ router.post("/login", async (req, res) => {
         username: username,
         actionType: "authentication_success",
       });
+
+      // Envie uma mensagem para o RabbitMQ após o registro do log
+      const rabbitMQMessage = {
+        type: "authentication",
+        action: "success",
+        username: username,
+      };
+      await sendMessageToRabbitMQ(rabbitMQMessage);
 
       // Gerar o token de autenticação
       const token = generateToken(user.id, user.username);
@@ -61,6 +95,14 @@ router.post("/login", async (req, res) => {
         username: username,
         actionType: "authentication_failure",
       });
+
+      // Envie uma mensagem para o RabbitMQ após o registro do log
+      const rabbitMQMessage = {
+        type: "authentication",
+        action: "failure",
+        username: username,
+      };
+      await sendMessageToRabbitMQ(rabbitMQMessage);
 
       return res
         .status(404)
@@ -76,6 +118,14 @@ router.post("/login", async (req, res) => {
       username: req.body.username,
       actionType: "authentication_failure",
     });
+
+    // Envie uma mensagem para o RabbitMQ após o registro do log
+    const rabbitMQMessage = {
+      type: "authentication",
+      action: "failure",
+      username: req.body.username,
+    };
+    await sendMessageToRabbitMQ(rabbitMQMessage);
 
     return res.status(500).json({
       status: false,

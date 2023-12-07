@@ -50,6 +50,16 @@ router.post("/add", authenticateToken, async (req, res) => {
           username: user.username,
           actionType: "notification",
         });
+
+        // Envia a mensagem para o RabbitMQ após cada notificação
+        const rabbitMQNotificationMessage = {
+          type: "notification",
+          action: "add",
+          username: user.username,
+          advice: newAdvice,
+        };
+
+        await sendMessageToRabbitMQ(rabbitMQNotificationMessage);
       }
     }
 
@@ -117,6 +127,16 @@ router.get("/search", authenticateToken, async (req, res) => {
         actionType: "search",
         searchTerm: sanitizedTerm,
       });
+
+      // Envia a mensagem para o RabbitMQ após registrar no log
+      const rabbitMQMessage = {
+        type: "search",
+        action: "perform",
+        searchTerm: sanitizedTerm,
+        username: req.username,
+      };
+
+      await sendMessageToRabbitMQ(rabbitMQMessage);
 
       res.json({
         success: true,
