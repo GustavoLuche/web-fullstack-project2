@@ -5,6 +5,7 @@ import {
   searchAdviceByTerm,
   searchAdviceByTermRoute,
   insertAdvice,
+  getNotifications,
 } from "../services/adviceService";
 
 // Estrutura inicial do estado
@@ -20,6 +21,7 @@ const initialState = {
   showInsertionPage: false,
   showSearchPage: false,
   showNotificationPage: false,
+  notificationList: [],
 };
 
 // Criação do contexto
@@ -36,6 +38,7 @@ const SET_SHOW_HOME_PAGE = "SET_SHOW_HOME_PAGE";
 const SET_SHOW_INSERTION_PAGE = "SET_SHOW_INSERTION_PAGE";
 const SET_SHOW_SEARCH_PAGE = "SET_SHOW_SEARCH_PAGE";
 const SET_SHOW_NOTIFICATION_PAGE = "SET_SHOW_NOTIFICATION_PAGE";
+const SET_NOTIFICATION_LIST = "SET_NOTIFICATION_LIST";
 
 // Função de redução para atualizar o estado com base em ações
 function searchReducer(state, action) {
@@ -60,6 +63,8 @@ function searchReducer(state, action) {
       return { ...state, showSearchPage: action.payload };
     case SET_SHOW_NOTIFICATION_PAGE:
       return { ...state, showNotificationPage: action.payload };
+    case SET_NOTIFICATION_LIST:
+      return { ...state, notificationList: action.payload };
     default:
       return state;
   }
@@ -144,6 +149,19 @@ export function AdviceContextProvider({ children }) {
     dispatch({ type: SET_ERROR, payload: null });
   };
 
+  const getNotificationsWithContext = async () => {
+    try {
+      // Faça a solicitação para obter notificações
+      const notificationsData = await getNotifications();
+
+      // Dispare a ação para atualizar notificationList no estado
+      dispatch({ type: SET_NOTIFICATION_LIST, payload: notificationsData });
+      dispatch({ type: SET_ERROR, payload: null });
+    } catch (error) {
+      dispatch({ type: SET_ERROR, payload: error.message });
+    }
+  };
+
   return (
     <AdviceContext.Provider
       value={{
@@ -153,6 +171,7 @@ export function AdviceContextProvider({ children }) {
         changePage,
         insertAdvice: insertAdviceWithContext,
         resetState,
+        getNotifications: getNotificationsWithContext,
       }}
     >
       {children}

@@ -101,3 +101,34 @@ export async function insertAdvice(adviceText) {
     throw error;
   }
 }
+
+/**
+ * Função assíncrona para buscar notificações da API.
+ *
+ * @returns {Promise<Array>} Uma matriz de notificações.
+ * @throws {Error} Lança um erro se houver algum problema com a solicitação ou se nenhuma notificação for encontrada.
+ */
+export async function getNotifications() {
+  try {
+    // Construa a URL para a rota de notificações
+    const notificationsURL = "http://localhost:3001/notification";
+
+    // Faça uma solicitação HTTP GET para a API
+    const response = await axiosInstance.get(notificationsURL);
+
+    // Verifique se a resposta foi bem-sucedida e contém dados válidos
+    if (
+      response.status === 200 &&
+      response.data &&
+      response.data.notifications &&
+      response.data.notifications.length > 0
+    ) {
+      return response.data.notifications;
+    } else {
+      throw new Error("No notifications found.");
+    }
+  } catch (error) {
+    console.error(`Error when fetching notifications: ${error.message}`);
+    throw error;
+  }
+}
