@@ -2,6 +2,7 @@
 const { DataTypes } = require("sequelize");
 const { sequelize } = require("../config/database");
 
+// Define o modelo Advice no banco de dados
 const Advice = sequelize.define("Advice", {
   id: {
     type: DataTypes.INTEGER,
@@ -20,7 +21,7 @@ const Advice = sequelize.define("Advice", {
         msg: "O campo 'advice' não pode estar vazio.",
       },
       len: {
-        args: [1, 146], // Defina o comprimento máximo desejado
+        args: [3, 146], // Defina o comprimento máximo desejado
         msg: "O conselho deve ter entre 1 e 146 caracteres.",
       },
     },

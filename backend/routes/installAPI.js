@@ -8,33 +8,55 @@ const userController = require("../controllers/userController");
 const adviceController = require("../controllers/adviceController");
 const logController = require("../controllers/logController");
 
+/**
+ * Rota para inicializar a API.
+ * Realiza a sincronização do banco de dados, cria usuários e conselhos durante a instalação.
+ * Registra logs de criação de usuários e conselhos.
+ */
 router.get("/", async (req, res) => {
-  await sequelize.sync({ force: true });
+  try {
+    // Sincroniza o banco de dados (force: true remove e recria as tabelas)
+    await sequelize.sync({ force: true });
 
-  const users = await createUsers();
-  const advices = await createAdvices();
+    // Cria usuários
+    const users = await createUsers();
 
-  // Log de criação de usuários
-  await logController.logMessage({
-    message: "Usuários criados durante a instalação",
-    username: "system",
-    actionType: "installation",
-  });
+    // Cria conselhos
+    const advices = await createAdvices();
 
-  // Log de criação de conselhos
-  await logController.logMessage({
-    message: "Conselhos criados durante a instalação",
-    username: "system",
-    actionType: "installation",
-  });
+    // Log de criação de usuários
+    await logController.logMessage({
+      message: "Usuários criados durante a instalação",
+      username: "system",
+      actionType: "installation",
+    });
 
-  res.json({
-    status: true,
-    users: users,
-    advices: advices,
-  });
+    // Log de criação de conselhos
+    await logController.logMessage({
+      message: "Conselhos criados durante a instalação",
+      username: "system",
+      actionType: "installation",
+    });
+
+    res.json({
+      status: true,
+      users: users,
+      advices: advices,
+    });
+  } catch (error) {
+    console.error("Erro durante a instalação:", error);
+    res.status(500).json({
+      status: false,
+      message: "Erro durante a instalação",
+      error: error.message,
+    });
+  }
 });
 
+/**
+ * Cria usuários usando o controller de usuário.
+ * @returns {Array} Array de usuários criados.
+ */
 const createUsers = async () => {
   const userData = [
     {
@@ -133,6 +155,10 @@ const createUsers = async () => {
   return users;
 };
 
+/**
+ * Cria conselhos usando o controller de conselhos.
+ * @returns {Array} Array de conselhos criados.
+ */
 const createAdvices = async () => {
   const adviceData = [
     {

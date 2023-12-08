@@ -14,14 +14,14 @@ connectToDatabase();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-// Use o middleware cors
+// Use o middleware cors para lidar com CORS
 app.use(cors());
 
 // Rotas de autenticação
 const authRoutes = require("./routes/authRoutes");
 app.use("/auth", authRoutes);
 
-// Rotas de advices
+// Rotas de conselhos (advices)
 const adviceRoutes = require("./routes/adviceRoutes");
 app.use("/advice", adviceRoutes);
 
@@ -29,11 +29,11 @@ app.use("/advice", adviceRoutes);
 const notificationRoutes = require("./routes/notificationRoutes");
 app.use("/notification", notificationRoutes);
 
-// Rota para Instalação
+// Rota para instalação
 const installRouter = require("./routes/installAPI");
 app.use("/install", installRouter);
 
-// Define uma rota para a raiz ("/") que envia uma mensagem simples
+// Rota para a raiz ("/") que envia uma mensagem simples
 app.get("/", (req, res) => {
   res.send("Express server running successfully!");
 });
@@ -41,6 +41,7 @@ app.get("/", (req, res) => {
 // Configura o RabbitMQ
 const { setupRabbitMQ } = require("./config/rabbitmqConfig");
 
+// Configura e consome mensagens do RabbitMQ
 setupRabbitMQ().then(({ channel, exchange }) => {
   // Cria uma fila temporária exclusiva
   channel.assertQueue("", { exclusive: true }).then((q) => {

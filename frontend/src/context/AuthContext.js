@@ -1,4 +1,4 @@
-// frontend/src/constex/AuthContext.js
+// frontend/src/context/AuthContext.js
 import React, { createContext, useReducer, useContext, useEffect } from "react";
 import { login, isTokenValid } from "../services/authService";
 
@@ -43,13 +43,20 @@ export function AuthContextProvider({ children }) {
   const performLogin = async (username, password) => {
     try {
       const result = await login(username, password);
-      dispatch({ type: SET_TOKEN, payload: result.token });
-      toggleAuthentication(true);
 
-      // Armazenar token no local storage
-      localStorage.setItem("token", result.token);
+      if (result.token) {
+        dispatch({ type: SET_TOKEN, payload: result.token });
+        toggleAuthentication(true);
 
-      return result;
+        // Armazenar token no local storage
+        localStorage.setItem("token", result.token);
+
+        return result;
+      } else {
+        // Tratar cenário onde o token não é recebido corretamente
+        console.error("Token não recebido corretamente:", result);
+        return null;
+      }
     } catch (error) {
       // Tratar erros de login, se necessário
       console.error("Erro ao fazer login:", error);

@@ -1,3 +1,4 @@
+// frontend/src/components/Greeting.js
 import React from "react";
 import { useAdviceContext } from "../context/AdviceContext.js";
 
@@ -9,9 +10,7 @@ function Greeting() {
 
   return (
     <div className="App-greeting mb-4">
-      <h2
-        className={!showSearchPage ? "text-center" : "text-center text-danger"}
-      >
+      <h2 className={!showSearchPage ? "text-center" : "text-center text-danger"}>
         Welcome to the Advice Slip Search
       </h2>
       <p className="text-center m-0">

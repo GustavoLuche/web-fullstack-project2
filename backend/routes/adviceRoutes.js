@@ -1,3 +1,4 @@
+// backend/routes/adviceRoutes.js
 const express = require("express");
 const router = express.Router();
 const adviceController = require("../controllers/adviceController");
@@ -27,13 +28,14 @@ const { setupRabbitMQ } = require("../config/rabbitmqConfig");
 router.post("/add", authenticateToken, async (req, res) => {
   try {
     const { advice } = req.body;
+
     // Sanitiza o texto do conselho para evitar XSS
     const sanitizedAdvice = DOMPurify.sanitize(advice);
     const newAdvice = await adviceController.save(sanitizedAdvice);
 
     // Registra no log e envia para o RabbitMQ
     await logController.logMessage({
-      message: `Novo conselho adicionado: ${newAdvice.id}`,
+      message: `Novo conselho adicionado: ${newAdvice.advice}`,
       username: req.username,
       actionType: "add",
     });
@@ -46,7 +48,7 @@ router.post("/add", authenticateToken, async (req, res) => {
       if (user.username !== senderUsername) {
         // Envie uma notificação para cada usuário
         await logController.logMessage({
-          message: `Novo conselho adicionado por ${senderUsername}: ${newAdvice.id}`,
+          message: `Novo conselho adicionado por ${senderUsername}: ${newAdvice.advice}`,
           username: user.username,
           actionType: "notification",
         });
@@ -80,6 +82,7 @@ router.post("/add", authenticateToken, async (req, res) => {
         console.log("Cache excluído com sucesso.");
       }
     });
+
     res.json({
       success: true,
       message: "Conselho adicionado com sucesso.",

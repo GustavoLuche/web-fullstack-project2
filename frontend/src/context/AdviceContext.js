@@ -1,5 +1,4 @@
-// frontend/src/constex/AdviceContext.js
-
+// frontend/src/context/AdviceContext.js
 import React, { createContext, useReducer, useContext, useEffect } from "react";
 import {
   searchAdviceByTerm,

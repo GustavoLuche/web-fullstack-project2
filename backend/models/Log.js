@@ -2,6 +2,7 @@
 const { DataTypes } = require("sequelize");
 const { sequelize } = require("../config/database");
 
+// Define o modelo Log no banco de dados
 const LogModel = sequelize.define("Log", {
   id: {
     type: DataTypes.INTEGER,

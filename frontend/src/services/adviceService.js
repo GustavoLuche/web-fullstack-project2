@@ -1,3 +1,4 @@
+// frontend/src/services/adviceService.js
 import axios from "axios";
 import axiosInstance from "./axiosConfig";
 
@@ -43,7 +44,7 @@ export async function searchAdviceByTermRoute(term) {
     // Construa a URL de pesquisa com base no termo
     const searchURL = `http://localhost:3001/advice/search?term=${term}`;
 
-    // Faça uma solicitação HTTP GET para a API
+    // Faça uma solicitação HTTP GET para a API usando axiosInstance
     const response = await axiosInstance.get(searchURL);
 
     // Verifique se a resposta foi bem-sucedida e contém dados válidos
@@ -80,7 +81,7 @@ export async function insertAdvice(adviceText) {
     // Construa a URL para a rota de inserção
     const insertURL = "http://localhost:3001/advice/add";
 
-    // Faça uma solicitação HTTP POST para a API
+    // Faça uma solicitação HTTP POST para a API usando axiosInstance
     const response = await axiosInstance.post(insertURL, {
       advice: adviceText,
     });
@@ -113,7 +114,7 @@ export async function getNotifications() {
     // Construa a URL para a rota de notificações
     const notificationsURL = "http://localhost:3001/notification";
 
-    // Faça uma solicitação HTTP GET para a API
+    // Faça uma solicitação HTTP GET para a API usando axiosInstance
     const response = await axiosInstance.get(notificationsURL);
 
     // Verifique se a resposta foi bem-sucedida e contém dados válidos

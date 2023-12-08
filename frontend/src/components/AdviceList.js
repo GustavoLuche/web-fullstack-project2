@@ -1,5 +1,7 @@
+// frontend/src/components/AdviceList.js
 import React from "react";
 import Card from "react-bootstrap/Card";
+import PropTypes from "prop-types"; // Importe PropTypes para validar as propriedades
 import { useAdviceContext } from "../context/AdviceContext";
 
 // O componente "AdviceList" é responsável por exibir a lista de conselhos em cartões.
@@ -32,5 +34,17 @@ function AdviceList() {
     </div>
   );
 }
+
+// Defina PropTypes para garantir a integridade das propriedades
+AdviceList.propTypes = {
+  adviceList: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number.isRequired,
+      advice: PropTypes.string.isRequired,
+    })
+  ),
+  currentPage: PropTypes.number.isRequired,
+  itemsPerPage: PropTypes.number.isRequired,
+};
 
 export default AdviceList;

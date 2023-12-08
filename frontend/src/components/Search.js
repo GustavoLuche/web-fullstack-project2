@@ -1,3 +1,4 @@
+// frontend/src/components/Search.js
 import React, { useState } from "react";
 import Button from "react-bootstrap/Button";
 import InputGroup from "react-bootstrap/InputGroup";
@@ -5,7 +6,9 @@ import Form from "react-bootstrap/Form";
 import { useAdviceContext } from "../context/AdviceContext";
 import { useAuthContext } from "../context/AuthContext";
 
-// O componente "Search" permite que os usuários insiram um termo de busca e iniciem a pesquisa.
+/**
+ * O componente Search permite que os usuários insiram um termo de busca e iniciem a pesquisa.
+ */
 function Search() {
   // Usando o contexto para acessar a função de pesquisa
   const { searchAdviceByTerm } = useAdviceContext();
@@ -14,18 +17,28 @@ function Search() {
   // Estado local para controlar o termo de busca
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Função para lidar com a pesquisa
+  /**
+   * Lidar com a pesquisa.
+   * Verifica a validade do token e inicia a pesquisa se o termo não estiver vazio.
+   */
   const handleSearch = () => {
-    checkTokenValidity()
+    checkTokenValidity();
+
+    // Verifica se searchAdviceByTerm é uma função e se o termo de busca não está vazio
     if (typeof searchAdviceByTerm === "function" && searchQuery.trim() !== "") {
       searchAdviceByTerm(searchQuery);
       setSearchQuery(""); // Limpa o campo de busca após a pesquisa
     } else {
-      console.error("Invalid searchAdviceByTerm function or empty search term.");
+      console.error(
+        "Invalid searchAdviceByTerm function or empty search term."
+      );
     }
   };
 
-  // Manipulador para envio de formulário quando o usuário pressiona Enter
+  /**
+   * Manipulador para envio de formulário quando o usuário pressiona Enter.
+   * Chama a função handleSearch().
+   */
   const handleSubmit = (e) => {
     e.preventDefault();
     handleSearch();

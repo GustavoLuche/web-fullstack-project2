@@ -1,12 +1,15 @@
+// backend/controllers/adviceController.js
 const AdviceModel = require("../models/Advice");
 const Sequelize = require("sequelize");
 
 module.exports = {
+  // Obtém uma lista de todos os conselhos
   list: async () => {
     const advices = await AdviceModel.findAll();
     return advices;
   },
 
+  // Salva um novo conselho no banco de dados
   save: async (adviceText) => {
     try {
       // Evita SQL Injection usando prepared statements
@@ -19,6 +22,7 @@ module.exports = {
     }
   },
 
+  // Atualiza um conselho existente com um novo texto
   update: async (id, updatedAdviceText) => {
     try {
       const existingAdvice = await AdviceModel.findByPk(id);
@@ -35,10 +39,13 @@ module.exports = {
     }
   },
 
+  // Exclui um conselho com base no ID
   delete: async (id) => {
     try {
       const adviceToDelete = await AdviceModel.findByPk(id);
       if (!adviceToDelete) return false;
+
+      // Exclui o conselho
       await adviceToDelete.destroy();
       return adviceToDelete;
     } catch (error) {
@@ -46,6 +53,7 @@ module.exports = {
     }
   },
 
+  // Obtém um conselho específico com base no texto
   getByAdvice: async (adviceText) => {
     try {
       // Evita SQL Injection usando prepared statements
@@ -54,13 +62,14 @@ module.exports = {
           [Sequelize.Op.like]: "%" + adviceText.toLowerCase() + "%",
         }),
       });
-      if (!foundAdvice) return false;
-      return foundAdvice;
+
+      return foundAdvice || false;
     } catch (error) {
       throw error;
     }
   },
 
+  // Obtém um conselho específico com base no ID
   getById: async (id) => {
     try {
       const advice = await AdviceModel.findByPk(id);
@@ -70,6 +79,7 @@ module.exports = {
     }
   },
 
+  // Obtém uma lista de conselhos com base em um termo de pesquisa
   getByTerm: async (term) => {
     try {
       // Evita SQL Injection usando prepared statements
@@ -78,6 +88,7 @@ module.exports = {
           [Sequelize.Op.like]: "%" + term.toLowerCase() + "%",
         }),
       });
+
       return advices;
     } catch (error) {
       throw error;

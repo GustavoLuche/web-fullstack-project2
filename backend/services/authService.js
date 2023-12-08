@@ -3,7 +3,12 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 require("dotenv").config();
 
-// Função para gerar o token de autenticação
+/**
+ * Função para gerar um token de autenticação usando JWT.
+ * @param {number} userId - ID do usuário.
+ * @param {string} username - Nome de usuário.
+ * @returns {string} Token JWT gerado.
+ */
 function generateToken(userId, username) {
   const jwtSecret = process.env.JWT_SECRET;
   const expiresIn = process.env.JWT_EXPIRES_IN;
@@ -15,7 +20,12 @@ function generateToken(userId, username) {
   return token;
 }
 
-// Função para validar o token de autenticação
+/**
+ * Middleware para autenticar um usuário usando o token fornecido.
+ * @param {Object} req - Objeto de requisição do Express.
+ * @param {Object} res - Objeto de resposta do Express.
+ * @param {function} next - Próximo middleware.
+ */
 function authenticateToken(req, res, next) {
   const authorizationHeader = req.headers["authorization"];
 
@@ -34,7 +44,7 @@ function authenticateToken(req, res, next) {
     if (err) {
       res
         .status(403)
-        .json({ status: false, msg: "Acesso negado - Token invalido" });
+        .json({ status: false, msg: "Acesso negado - Token inválido" });
       return;
     }
     req.userId = payload.userId;
@@ -44,13 +54,22 @@ function authenticateToken(req, res, next) {
   });
 }
 
-// Função para gerar o hash da senha
+/**
+ * Função para gerar o hash da senha usando bcrypt.
+ * @param {string} password - Senha a ser hashada.
+ * @returns {Promise<string>} Hash da senha.
+ */
 async function hashPassword(password) {
   const saltRounds = 10;
   return await bcrypt.hash(password, saltRounds);
 }
 
-// Função para verificar a senha
+/**
+ * Função para verificar se a senha corresponde ao hash usando bcrypt.
+ * @param {string} plainTextPassword - Senha em texto plano.
+ * @param {string} hashedPassword - Hash da senha.
+ * @returns {Promise<boolean>} True se a senha corresponder, senão False.
+ */
 async function verifyPassword(plainTextPassword, hashedPassword) {
   return await bcrypt.compare(plainTextPassword, hashedPassword);
 }

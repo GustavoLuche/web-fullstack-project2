@@ -1,8 +1,17 @@
+// frontend/src/services/authService.js
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 
 const API_URL = "http://localhost:3001";
 
+/**
+ * Função assíncrona para realizar o login.
+ *
+ * @param {string} username - O nome de usuário.
+ * @param {string} password - A senha do usuário.
+ * @returns {Promise<Object>} Objeto contendo informações do usuário e token.
+ * @throws {Error} Lança um erro em caso de falha no login.
+ */
 export async function login(username, password) {
   try {
     const response = await axios.post(`${API_URL}/auth/login`, {
@@ -22,8 +31,8 @@ export async function login(username, password) {
         throw new Error("Usuário e senha são obrigatórios");
       } else if (status === 401) {
         // Autenticação falhou
-        alert("username ou senha inválidos");
-        throw new Error("username ou senha inválidos");
+        alert("Username ou senha inválidos");
+        throw new Error("Username ou senha inválidos");
       } else if (status === 404) {
         // Usuário não encontrado
         alert("Usuário não encontrado");
@@ -49,7 +58,12 @@ export async function login(username, password) {
   }
 }
 
-// Função para verificar a validade do token
+/**
+ * Função para verificar a validade do token.
+ *
+ * @param {string} token - Token a ser verificado.
+ * @returns {boolean} True se o token for válido, False caso contrário.
+ */
 export function isTokenValid(token) {
   try {
     const decoded = jwtDecode(token);

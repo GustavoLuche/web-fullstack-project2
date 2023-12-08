@@ -1,17 +1,27 @@
 // frontend/src/components/Header.js
 import React from "react";
+import PropTypes from "prop-types"; // Importe PropTypes para validar as propriedades.
 import { Navbar, Nav, Container, Button } from "react-bootstrap";
 import { useAuthContext } from "../context/AuthContext";
 import { useAdviceContext } from "../context/AdviceContext.js";
 
+/**
+ * O componente Header exibe a barra de navegação superior da aplicação.
+ *
+ * @param {Object} props - As propriedades do componente.
+ * @param {string} props.title - O título exibido na barra de navegação.
+ */
 function Header({ title }) {
+  // Use o contexto para acessar funções e estado relacionados à autenticação e aos conselhos
   const { performLogout, checkTokenValidity } = useAuthContext();
   const { changePage } = useAdviceContext();
 
+  // Lidar com o clique no botão de logout
   const handleLogout = () => {
     performLogout();
   };
 
+  // Lidar com o clique em uma navegação de página
   const handleNavClick = (page) => {
     checkTokenValidity();
     changePage(page);
@@ -58,5 +68,10 @@ function Header({ title }) {
     </Navbar>
   );
 }
+
+// Defina as PropTypes para garantir a integridade das propriedades.
+Header.propTypes = {
+  title: PropTypes.string.isRequired,
+};
 
 export default Header;
